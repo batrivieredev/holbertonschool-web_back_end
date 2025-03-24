@@ -1,34 +1,26 @@
-class Currency {
+export default class Currency {
   constructor(code, name) {
-    // Assigning the constructor parameters to private attributes
-    this._code = code;
-    this._name = name;
+    this.code = code;
+    this.name = name;
   }
 
-  // Getter for 'code'
-  get code() {
-    return this._code;
-  }
-
-  // Setter for 'code'
-  set code(value) {
-    this._code = value;
-  }
-
-  // Getter for 'name'
   get name() {
     return this._name;
   }
 
-  // Setter for 'name'
-  set name(value) {
-    this._name = value;
+  set name(name) {
+    this._name = name;
   }
 
-  // Method to display full currency as 'name (code)'
+  get code() {
+    return this._code;
+  }
+
+  set code(code) {
+    this._code = code;
+  }
+
   displayFullCurrency() {
     return `${this._name} (${this._code})`;
   }
 }
-
-export default Currency;

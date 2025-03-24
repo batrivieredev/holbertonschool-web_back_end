@@ -6,22 +6,6 @@ export default class Car {
   }
 
   cloneCar() {
-    const clonedCar = new this.constructor();
-    clonedCar._brand = undefined;
-    clonedCar._motor = undefined;
-    clonedCar._color = undefined;
-    return clonedCar;
-  }
-
-  get brand() {
-    return this._brand;
-  }
-
-  get motor() {
-    return this._motor;
-  }
-
-  get color() {
-    return this._color;
+    return new this.constructor(this._brand, this._motor, this._color);
   }
 }
