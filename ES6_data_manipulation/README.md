@@ -32,6 +32,8 @@ At the end of this project, you are expected to be able to [explain to anyone](/
 
 ### 1.
 
+ 
+
 Create a function named `getListStudents` that returns an array of objects.
 
 Each object should have three attributes: `id` (Number), `firstName` (String), and `location` (String).
@@ -60,6 +62,8 @@ bob@dylan:~$
 
 ### 2.
 
+ 
+
 Create a function `getListStudentIds` that returns an array of ids from a list of object.
 
 This function is taking one argument which is an array of objects - and this array is the same format as `getListStudents` from the previous task.
@@ -84,6 +88,8 @@ bob@dylan:~$
   
 
 ### 3.
+
+ 
 
 Create a function `getStudentsByLocation` that returns an array of objects who are located in a specific city.
 
@@ -111,6 +117,8 @@ bob@dylan:~$
 
 ### 4.
 
+ 
+
 Create a function `getStudentIdsSum` that returns the sum of all the student ids.
 
 It should accept a list of students (from `getListStudents`) as a parameter.
@@ -134,6 +142,8 @@ bob@dylan:~$
   
 
 ### 5.
+
+ 
 
 Create a function `updateStudentGradeByCity` that returns an array of students for a specific city with their new grade
 
@@ -184,6 +194,8 @@ bob@dylan:~$
 
 ### 6.
 
+ 
+
 Create a function named `createInt8TypedArray` that returns a new `ArrayBuffer` with an `Int8` value at a specific position.
 
 It should accept three arguments: `length` (Number), `position` (Number), and `value` (Number).
@@ -211,6 +223,8 @@ bob@dylan:~$
 
 ### 7.
 
+ 
+
 Create a function named `setFromArray` that returns a `Set` from an array.
 
 It accepts an argument (Array, of any kind of element).
@@ -228,6 +242,8 @@ bob@dylan:~$
   
 
 ### 8.
+
+ 
 
 Create a function named `hasValuesFromArray` that returns a boolean if all the elements in the array exist within the set.
 
@@ -251,6 +267,8 @@ bob@dylan:~$
 
 ### 9.
 
+ 
+
 Create a function named `cleanSet` that returns a string of all the set values that start with a specific string (`startString`).
 
 It accepts two arguments: a `set` (Set) and a `startString` (String).
@@ -272,6 +290,8 @@ bob@dylan:~$
   
 
 ### 10.
+
+ 
 
 Create a function named `groceriesList` that returns a map of groceries with the following items (name, quantity):
 ```
@@ -302,6 +322,8 @@ bob@dylan:~$
   
 
 ### 11.
+
+ 
 
 Create a function named `updateUniqueItems` that returns an updated map for all items with initial quantity at 1.
 
