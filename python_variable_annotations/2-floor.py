@@ -1,13 +1,8 @@
 #!/usr/bin/env python3
-"""
-Module avec annotations de type : floor
-Prend un float n en argument et retourne la partie entière (plancher) de ce float.
-"""
-
+"""Returns the floor of a float."""
 import math
 
 
 def floor(n: float) -> int:
-    """Retourne la partie entière (plancher) du nombre à virgule flottante."""
+    """Returns the floor of a float."""
     return math.floor(n)
-
