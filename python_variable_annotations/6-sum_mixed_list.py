@@ -1,12 +1,8 @@
 #!/usr/bin/env python3
-"""
-Fonction annotée avec des types qui prend une liste mxd_lst d'entiers et de flottants
-et retourne leur somme sous forme de float.
-"""
-
-import typing
+"""Returns the sum of a list of integers and floats."""
+from typing import List, Union
 
 
-def sum_mixed_list(mxd_lst: typing.List[typing.Union[int, float]]) -> float:
-    """Retourne la somme des éléments d'une liste contenant des entiers et des flottants."""
-    return float(sum(mxd_lst))
+def sum_mixed_list(mxd_lst: List[Union[int, float]]) -> float:
+    """Returns the sum of a list of integers and floats."""
+    return sum(mxd_lst)
