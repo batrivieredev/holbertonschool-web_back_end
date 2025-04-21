@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-"""Module avec annotations de type qui concatène deux chaînes de caractères."""
+"""Concatenates two strings and returns the result."""
 
 
 def concat(str1: str, str2: str) -> str:
-    """Concatène deux chaînes de caractères et retourne le résultat."""
-    return (str1 + str2)
-
+    """Concatenates two strings and returns the result."""
+    return str1 + str2
