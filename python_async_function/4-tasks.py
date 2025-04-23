@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 """Async tasks: execute task concurrently in order of completion."""
 import asyncio
 from typing import List
