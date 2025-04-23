@@ -1,5 +1,5 @@
-#!/usr/bin/env python3
-"""Async tasks: execute task_wait_random concurrently in order of completion."""
+#!/usr/bin/python3
+"""Async tasks: execute task concurrently in order of completion."""
 import asyncio
 from typing import List
 
