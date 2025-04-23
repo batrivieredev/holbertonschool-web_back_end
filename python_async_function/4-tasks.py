@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
-"""Async tasks: execute task concurrently in order of completion."""
+"""
+This module defines an async function `task_wait_n` that creates
+multiple asynchronous tasks using `task_wait_random`, and returns
+the delays in the order of completion.
+"""
 import asyncio
 from typing import List
 
-# Import de task_wait_random depuis le fichier 3-tasks
 task_wait_random = __import__('3-tasks').task_wait_random
 
 
