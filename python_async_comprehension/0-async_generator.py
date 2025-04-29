@@ -1,22 +1,24 @@
 #!/usr/bin/env python3
 """
-Module containing an asynchronous generator that yields random numbers.
-Module contenant une coroutine génératrice asynchrone.
+Ce module définit une coroutine asynchrone permettant de générer
+des nombres aléatoires de manière non bloquante à l'aide d'asyncio.
 """
+
 import asyncio
 import random
-# from typing import AsyncGenerator
-# from typing import async_generator
-# import typing
 import typing
 
 
-async def async_generator() -> typing.Generator[float, None, None]:
+async def async_generator() -> typing.AsyncGenerator[float, None]:
     """
-    Génère 10 nombres aléatoires entre 0 et 10, avec une pause de 1 seconde
-    entre chaque.
-    A coroutine that generates 10 random numbers asynchronously.
-    Each number is between 0 and 10, with a 1-second delay between generations.
+    Coroutine asynchrone qui produit 10 nombres flottants aléatoires.
+
+    À chaque itération, la coroutine attend une seconde (sans bloquer
+    l'exécution globale) avant de produire un nouveau nombre compris
+    entre 0 et 10.
+
+    Retour :
+        AsyncGenerator[float, None] : Générateur asynchrone de nombres à virgule flottante.
     """
     for _ in range(10):
         await asyncio.sleep(1)
