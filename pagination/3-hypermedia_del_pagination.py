@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Deletion-resilient hypermedia pagination"""
+"""
+Deletion-resilient hypermedia pagination
+"""
 
 import csv
-import math
 from typing import List, Dict, Any
 
 index_range = __import__('0-simple_helper_function').index_range
@@ -30,28 +31,30 @@ class Server:
         if self.__indexed_dataset is None:
             dataset = self.dataset()
             self.__indexed_dataset = {
-                i: row for i, row in enumerate(dataset)
+                i: row for i, row in enumerate(dataset[:1000])
             }
         return self.__indexed_dataset
 
-    def get_hyper_index(self, index: int = 0, page_size: int = 10) -> Dict[str, Any]:
+    def get_hyper_index(self, index: int = None, page_size: int = 10) -> Dict[str, Any]:
         """Return page info with deletion-resilient pagination"""
         assert isinstance(index, int) and index >= 0
-        assert isinstance(page_size, int) and page_size > 0
-
         indexed_data = self.indexed_dataset()
-        dataset_size = len(indexed_data)
+        max_index = max(indexed_data.keys())
+        assert index <= max_index
+
         data = []
         current_index = index
+        collected = 0
 
-        while len(data) < page_size and current_index < dataset_size:
+        while collected < page_size and current_index <= max_index:
             if current_index in indexed_data:
                 data.append(indexed_data[current_index])
+                collected += 1
             current_index += 1
 
         return {
             'index': index,
             'next_index': current_index,
             'page_size': len(data),
-            'data': data,
+            'data': data
         }
