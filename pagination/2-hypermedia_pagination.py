@@ -3,6 +3,7 @@
 
 import math
 from typing import List, Dict
+import csv
 
 index_range = __import__('0-simple_helper_function').index_range
 
@@ -17,7 +18,6 @@ class Server:
     def dataset(self) -> List[List]:
         """Cached dataset"""
         if self.__dataset is None:
-            import csv
             with open(self.DATA_FILE) as f:
                 reader = csv.reader(f)
                 dataset = [row for row in reader]
@@ -41,7 +41,7 @@ class Server:
             'page_size': len(data),
             'page': page,
             'data': data,
-            'next_page': page + 1 if (page * page_size) < total_items else None,
+            'next_page': page + 1 if page < total_pages else None,
             'prev_page': page - 1 if page > 1 else None,
-            'total_pages': total_pages,
+            'total_pages': total_pages
         }
