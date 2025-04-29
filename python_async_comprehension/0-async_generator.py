@@ -7,7 +7,8 @@ This module contains an asynchronous generator coroutine that yields
 
 import asyncio
 import random
-from typing import AsyncGenerator
+import typing
+
 
 async def async_generator() -> AsyncGenerator[float, None]:
     """
