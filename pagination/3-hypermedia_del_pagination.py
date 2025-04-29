@@ -6,8 +6,6 @@ Deletion-resilient hypermedia pagination
 import csv
 from typing import List, Dict, Any
 
-index_range = __import__('0-simple_helper_function').index_range
-
 
 class Server:
     """Server class to paginate a database of popular baby names."""
@@ -23,15 +21,16 @@ class Server:
             with open(self.DATA_FILE) as f:
                 reader = csv.reader(f)
                 dataset = [row for row in reader]
-            self.__dataset = dataset[1:]
+            self.__dataset = dataset[1:]  # Skip header
         return self.__dataset
 
     def indexed_dataset(self) -> Dict[int, List]:
         """Dataset indexed by sorting position, starting at 0"""
         if self.__indexed_dataset is None:
             dataset = self.dataset()
+            truncated_dataset = dataset[:1000]
             self.__indexed_dataset = {
-                i: row for i, row in enumerate(dataset[:1000])
+                i: row for i, row in enumerate(truncated_dataset)
             }
         return self.__indexed_dataset
 
@@ -46,6 +45,7 @@ class Server:
         current_index = index
         collected = 0
 
+        # Loop to collect exactly `page_size` valid entries
         while collected < page_size and current_index <= max_index:
             if current_index in indexed_data:
                 data.append(indexed_data[current_index])
