@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+!/usr/bin/env python3
 """
 Module: 0-async_generator
 This module contains an asynchronous generator coroutine that yields
@@ -10,7 +10,7 @@ import random
 import typing
 
 
-async def async_generator() -> AsyncGenerator[float, None]:
+async def async_generator() -> AsyncGenerator[float, None, None]:
     """
     Coroutine that yields 10 random numbers between 0 and 10.
 
