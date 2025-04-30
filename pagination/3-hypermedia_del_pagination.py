@@ -30,31 +30,42 @@ class Server:
             dataset = self.dataset()
             truncated_dataset = dataset[:1000]
             self.__indexed_dataset = {
-                i: row for i, row in enumerate(truncated_dataset)
+                i: truncated_dataset[i] for i in range(len(truncated_dataset))
             }
         return self.__indexed_dataset
 
     def get_hyper_index(self, index: int = None, page_size: int = 10) -> Dict[str, Any]:
-        """Return page info with deletion-resilient pagination"""
-        assert isinstance(index, int) and index >= 0
+        """Return page info with deletion-resilient pagination.
+
+        Args:
+            index: Start index of the current page
+            page_size: Size of the page
+
+        Returns:
+            Dict containing:
+                index: Current start index
+                next_index: Next index to query
+                page_size: Current page size
+                data: Current page data
+        """
+        if index is None:
+            index = 0
+
         indexed_data = self.indexed_dataset()
-        max_index = max(indexed_data.keys())
-        assert index <= max_index
+        assert isinstance(index, int) and index >= 0
+        assert index <= max(indexed_data.keys())
 
         data = []
-        current_index = index
-        collected = 0
+        next_index = index
 
-        # Loop to collect exactly `page_size` valid entries
-        while collected < page_size and current_index <= max_index:
-            if current_index in indexed_data:
-                data.append(indexed_data[current_index])
-                collected += 1
-            current_index += 1
+        while len(data) < page_size and next_index <= max(indexed_data.keys()):
+            if next_index in indexed_data:
+                data.append(indexed_data[next_index])
+            next_index += 1
 
         return {
             'index': index,
-            'next_index': current_index,
-            'page_size': len(data),
+            'next_index': next_index,
+            'page_size': page_size,
             'data': data
         }
