@@ -19,19 +19,24 @@ async function countStudents(path) {
       fields[field].names.push(firstName);
     });
 
-    Object.entries(fields).forEach(([field, data]) => {
+    // Sort fields alphabetically
+    const sortedFields = Object.keys(fields).sort((a, b) =>
+      a.localeCompare(b, undefined, { sensitivity: 'base' })
+    );
+
+    sortedFields.forEach(field => {
+      const data = fields[field];
       output += `Number of students in ${field}: ${data.count}. List: ${data.names.join(', ')}\n`;
     });
 
-    return output;
+    return output.trim();
   } catch (error) {
     throw new Error('Cannot load the database');
   }
 }
 
 const app = http.createServer(async (req, res) => {
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/plain');
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
 
   if (req.url === '/') {
     res.end('Hello Holberton School!');
@@ -43,10 +48,11 @@ const app = http.createServer(async (req, res) => {
     } catch (error) {
       res.end(`This is the list of our students\n${error.message}`);
     }
+  } else {
+    res.end('Hello Holberton School!');
   }
 });
 
 app.listen(1245);
 
 module.exports = app;
-
