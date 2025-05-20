@@ -1,38 +1,38 @@
 const http = require('http');
 const fs = require('fs');
 
-function countStudents(path) {
-  return new Promise((resolve, reject) => {
-    fs.readFile(path, 'utf8', (error, data) => {
-      if (error) {
-        reject(new Error('Cannot load the database'));
-        return;
-      }
+const countStudents = (path) => new Promise((resolve, reject) => {
+  fs.readFile(path, 'utf8', (err, data) => {
+    if (err) {
+      reject(new Error('Cannot load the database'));
+      return;
+    }
 
-      const lines = data.toString().split('\n');
-      let students = lines.filter((line) => line.length > 0 && line.includes(','));
-      students = students.slice(1);
+    const lines = data.split('\n').filter((line) => line.trim() !== '');
+    lines.shift();
 
-      const fields = {};
-      students.forEach((student) => {
-        const [firstName, , , field] = student.split(',');
-        if (field) {
-          if (!fields[field]) {
-            fields[field] = [];
-          }
-          fields[field].push(firstName);
+    const students = {};
+    let totalStudents = 0;
+
+    lines.forEach((line) => {
+      const [firstname, , , field] = line.split(',');
+      if (firstname && field) {
+        totalStudents += 1;
+        if (!students[field]) {
+          students[field] = [];
         }
-      });
-
-      let output = `Number of students: ${students.length}\n`;
-      for (const [field, names] of Object.entries(fields)) {
-        output += `Number of students in ${field}: ${names.length}. List: ${names.join(', ')}\n`;
+        students[field].push(firstname);
       }
-
-      resolve(output);
     });
+
+    let output = `Number of students: ${totalStudents}\n`;
+    for (const [field, names] of Object.entries(students)) {
+      output += `Number of students in ${field}: ${names.length}. List: ${names.join(', ')}\n`;
+    }
+
+    resolve(output);
   });
-}
+});
 
 const app = http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
