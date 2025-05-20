@@ -14,23 +14,22 @@ function countStudents(path) {
       students = students.slice(1);
 
       const fields = {};
-      let response = '';
-
-      response += `Number of students: ${students.length}\n`;
-
       students.forEach((student) => {
-        const [firstname, , , field] = student.split(',');
-        if (!fields[field]) {
-          fields[field] = [];
+        const [firstName, , , field] = student.split(',');
+        if (field) {
+          if (!fields[field]) {
+            fields[field] = [];
+          }
+          fields[field].push(firstName);
         }
-        fields[field].push(firstname);
       });
 
-      Object.keys(fields).forEach((field) => {
-        response += `Number of students in ${field}: ${fields[field].length}. List: ${fields[field].join(', ')}\n`;
-      });
+      let output = `Number of students: ${students.length}\n`;
+      for (const [field, names] of Object.entries(fields)) {
+        output += `Number of students in ${field}: ${names.length}. List: ${names.join(', ')}\n`;
+      }
 
-      resolve(response);
+      resolve(output);
     });
   });
 }
@@ -43,10 +42,12 @@ const app = http.createServer((req, res) => {
     const database = process.argv[2];
     countStudents(database)
       .then((data) => {
-        res.end(`This is the list of our students\n${data.slice(0, -1)}`);
+        res.write('This is the list of our students\n');
+        res.end(data.slice(0, -1));
       })
       .catch((error) => {
-        res.end(`This is the list of our students\n${error.message}`);
+        res.write('This is the list of our students\n');
+        res.end(error.message);
       });
   } else {
     res.writeHead(404, { 'Content-Type': 'text/plain' });
