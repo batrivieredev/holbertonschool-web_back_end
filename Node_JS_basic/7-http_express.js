@@ -22,17 +22,24 @@ async function countStudents(path) {
       fields[field].names.push(firstName);
     });
 
-    Object.entries(fields).forEach(([field, data]) => {
+    // Sort fields alphabetically
+    const sortedFields = Object.keys(fields).sort((a, b) =>
+      a.localeCompare(b, undefined, { sensitivity: 'base' })
+    );
+
+    sortedFields.forEach(field => {
+      const data = fields[field];
       output += `Number of students in ${field}: ${data.count}. List: ${data.names.join(', ')}\n`;
     });
 
-    return output;
+    return output.trim();
   } catch (error) {
     throw new Error('Cannot load the database');
   }
 }
 
 app.get('/', (req, res) => {
+  res.set('Content-Type', 'text/plain');
   res.send('Hello Holberton School!');
 });
 
@@ -40,8 +47,10 @@ app.get('/students', async (req, res) => {
   try {
     const database = process.argv[2];
     const data = await countStudents(database);
+    res.set('Content-Type', 'text/plain');
     res.send(`This is the list of our students\n${data}`);
   } catch (error) {
+    res.set('Content-Type', 'text/plain');
     res.send(`This is the list of our students\n${error.message}`);
   }
 });
@@ -49,4 +58,3 @@ app.get('/students', async (req, res) => {
 app.listen(port);
 
 module.exports = app;
-
