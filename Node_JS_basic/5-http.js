@@ -5,45 +5,60 @@ const args = process.argv.slice(2);
 const database = args[0];
 
 const countStudents = (path) => {
-  try {
-    const data = fs.readFileSync(path, 'utf8');
-    const lines = data.toString().split('\n');
-    const students = lines.slice(1).filter((line) => line.length > 0);
-    let message = '';
-
-    message += `Number of students: ${students.length}\n`;
-
-    const fields = {};
-    students.forEach((student) => {
-      const [firstName, , , field] = student.split(',');
-      if (!fields[field]) {
-        fields[field] = [];
+  return new Promise((resolve, reject) => {
+    fs.readFile(path, 'utf-8', (err, data) => {
+      if (err) {
+        reject(new Error('Cannot load the database'));
+        return;
       }
-      fields[field].push(firstName);
+
+      const lines = data.split('\n').filter((line) => line.trim() !== '');
+      lines.shift(); // Remove header row
+
+      const students = {};
+      let totalStudents = 0;
+
+      lines.forEach((line) => {
+        const [firstname, , , field] = line.split(',');
+
+        if (firstname && field) {
+          totalStudents += 1;
+
+          if (!students[field]) {
+            students[field] = [];
+          }
+
+          students[field].push(firstname);
+        }
+      });
+
+      let output = `Number of students: ${totalStudents}\n`;
+      for (const [field, names] of Object.entries(students)) {
+        output += `Number of students in ${field}: ${names.length}. List: ${names.join(', ')}\n`;
+      }
+
+      resolve(output.trim());
     });
-
-    for (const [field, names] of Object.entries(fields).sort()) {
-      message += `Number of students in ${field}: ${names.length}. List: ${names.join(', ')}\n`;
-    }
-
-    return message;
-  } catch (error) {
-    throw new Error('Cannot load the database');
-  }
+  });
 };
 
-const app = http.createServer((req, res) => {
+const app = http.createServer(async (req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
 
   if (req.url === '/') {
     res.end('Hello Holberton School!');
   } else if (req.url === '/students') {
+    res.write('This is the list of our students\n');
+
     try {
-      const message = countStudents(database);
-      res.end(`This is the list of our students\n${message.slice(0, -1)}`);
+      const message = await countStudents(database);
+      res.end(message);
     } catch (error) {
-      res.end(`This is the list of our students\n${error.message}`);
+      res.end(error.message);
     }
+  } else {
+    res.writeHead(404, { 'Content-Type': 'text/plain' });
+    res.end('Not Found');
   }
 });
 
