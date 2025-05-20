@@ -1,60 +1,58 @@
 const express = require('express');
-const fs = require('fs').promises;
+const fs = require('fs');
 
 const app = express();
-const port = 1245;
 
-async function countStudents(path) {
+function countStudents(path) {
   try {
-    const data = await fs.readFile(path, 'utf8');
-    const lines = data.trim().split('\n');
-    const students = lines.slice(1).filter(line => line);
+    const data = fs.readFileSync(path, 'utf8');
+    if (!data) {
+      throw new Error('Cannot load the database');
+    }
+
+    const lines = data.toString().split('\n');
+    const students = lines.slice(1).filter(line => line.length > 0);
+
+    if (students.length === 0) {
+      throw new Error('Cannot load the database');
+    }
 
     let output = `Number of students: ${students.length}\n`;
 
+    // Group students by field
     const fields = {};
     students.forEach(student => {
       const [firstName, , , field] = student.split(',');
       if (!fields[field]) {
-        fields[field] = { count: 0, names: [] };
+        fields[field] = [];
       }
-      fields[field].count += 1;
-      fields[field].names.push(firstName);
+      fields[field].push(firstName);
     });
 
-    // Sort fields alphabetically
-    const sortedFields = Object.keys(fields).sort((a, b) =>
-      a.localeCompare(b, undefined, { sensitivity: 'base' })
-    );
-
-    sortedFields.forEach(field => {
-      const data = fields[field];
-      output += `Number of students in ${field}: ${data.count}. List: ${data.names.join(', ')}\n`;
+    // Add results for each field (sorted alphabetically)
+    Object.keys(fields).sort().forEach(field => {
+      output += `Number of students in ${field}: ${fields[field].length}. List: ${fields[field].join(', ')}\n`;
     });
 
-    return output.trim();
+    return output;
   } catch (error) {
     throw new Error('Cannot load the database');
   }
 }
 
 app.get('/', (req, res) => {
-  res.set('Content-Type', 'text/plain');
   res.send('Hello Holberton School!');
 });
 
-app.get('/students', async (req, res) => {
+app.get('/students', (req, res) => {
   try {
-    const database = process.argv[2];
-    const data = await countStudents(database);
-    res.set('Content-Type', 'text/plain');
-    res.send(`This is the list of our students\n${data}`);
+    const output = countStudents(process.argv[2]);
+    res.send(`This is the list of our students\n${output}`);
   } catch (error) {
-    res.set('Content-Type', 'text/plain');
     res.send(`This is the list of our students\n${error.message}`);
   }
 });
 
-app.listen(port);
+app.listen(1245);
 
 module.exports = app;
