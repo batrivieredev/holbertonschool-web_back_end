@@ -23,8 +23,13 @@ function countStudents(path) {
       fields[field].names.push(firstName);
     });
 
-    // Display results for each field
-    Object.entries(fields).forEach(([field, data]) => {
+    // Sort fields alphabetically and display results
+    const sortedFields = Object.keys(fields).sort((a, b) =>
+      a.localeCompare(b, undefined, { sensitivity: 'base' })
+    );
+
+    sortedFields.forEach(field => {
+      const data = fields[field];
       console.log(
         `Number of students in ${field}: ${data.count}. List: ${data.names.join(', ')}`
       );
