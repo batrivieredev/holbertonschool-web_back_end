@@ -1,10 +1,7 @@
 const http = require('http');
 const fs = require('fs');
 
-const args = process.argv.slice(2);
-const database = args[0];
-
-const countStudents = (path) => {
+function countStudents(path) {
   return new Promise((resolve, reject) => {
     fs.readFile(path, 'utf-8', (err, data) => {
       if (err) {
@@ -40,19 +37,25 @@ const countStudents = (path) => {
       resolve(output.trim());
     });
   });
-};
+}
 
 const app = http.createServer(async (req, res) => {
-  res.writeHead(200, { 'Content-Type': 'text/plain' });
-
   if (req.url === '/') {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.end('Hello Holberton School!');
   } else if (req.url === '/students') {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.write('This is the list of our students\n');
 
+    const databasePath = process.argv[2];
+    if (!databasePath) {
+      res.end('Cannot load the database');
+      return;
+    }
+
     try {
-      const message = await countStudents(database);
-      res.end(message);
+      const studentData = await countStudents(databasePath);
+      res.end(studentData);
     } catch (error) {
       res.end(error.message);
     }
@@ -63,5 +66,4 @@ const app = http.createServer(async (req, res) => {
 });
 
 app.listen(1245);
-
 module.exports = app;
