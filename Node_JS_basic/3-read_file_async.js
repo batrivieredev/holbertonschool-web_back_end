@@ -2,14 +2,20 @@ const fs = require('fs').promises;
 
 async function countStudents(path) {
   try {
+    // Read and parse the database file
     const data = await fs.readFile(path, 'utf8');
-    const lines = data.trim().split('\n');
-    const students = lines.slice(1).filter(line => line); // Remove header and empty lines
-
-    if (!students.length) {
+    if (!data) {
       throw new Error('Cannot load the database');
     }
 
+    const lines = data.toString().split('\n');
+    const students = lines.slice(1).filter(line => line.length > 0);
+
+    if (students.length === 0) {
+      throw new Error('Cannot load the database');
+    }
+
+    // Log total number of students
     console.log(`Number of students: ${students.length}`);
 
     // Group students by field
@@ -17,27 +23,19 @@ async function countStudents(path) {
     students.forEach(student => {
       const [firstName, , , field] = student.split(',');
       if (!fields[field]) {
-        fields[field] = { count: 0, names: [] };
+        fields[field] = [];
       }
-      fields[field].count += 1;
-      fields[field].names.push(firstName);
+      fields[field].push(firstName);
     });
 
-    // Sort fields alphabetically and display results
-    const sortedFields = Object.keys(fields).sort((a, b) =>
-      a.localeCompare(b, undefined, { sensitivity: 'base' })
-    );
-
-    sortedFields.forEach(field => {
-      const data = fields[field];
+    // Log results for each field (sorted alphabetically)
+    Object.keys(fields).sort().forEach(field => {
       console.log(
-        `Number of students in ${field}: ${data.count}. List: ${data.names.join(', ')}`
+        `Number of students in ${field}: ${fields[field].length}. List: ${fields[field].join(', ')}`
       );
     });
-
-    return Promise.resolve(); // Explicitly return a resolved promise
   } catch (error) {
-    return Promise.reject(new Error('Cannot load the database'));
+    throw new Error('Cannot load the database');
   }
 }
 
