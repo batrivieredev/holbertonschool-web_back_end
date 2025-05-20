@@ -1,25 +1,20 @@
 const http = require('http');
 const fs = require('fs');
 
-function countStudents(path) {
+const args = process.argv.slice(2);
+const database = args[0];
+
+const countStudents = (path) => {
   try {
     const data = fs.readFileSync(path, 'utf8');
-    if (!data) {
-      throw new Error('Cannot load the database');
-    }
-
     const lines = data.toString().split('\n');
-    const students = lines.slice(1).filter(line => line.length > 0);
+    const students = lines.slice(1).filter((line) => line.length > 0);
+    let message = '';
 
-    if (students.length === 0) {
-      throw new Error('Cannot load the database');
-    }
+    message += `Number of students: ${students.length}\n`;
 
-    let output = `Number of students: ${students.length}\n`;
-
-    // Group students by field
     const fields = {};
-    students.forEach(student => {
+    students.forEach((student) => {
       const [firstName, , , field] = student.split(',');
       if (!fields[field]) {
         fields[field] = [];
@@ -27,16 +22,15 @@ function countStudents(path) {
       fields[field].push(firstName);
     });
 
-    // Add results for each field (sorted alphabetically)
-    Object.keys(fields).sort().forEach(field => {
-      output += `Number of students in ${field}: ${fields[field].length}. List: ${fields[field].join(', ')}\n`;
-    });
+    for (const [field, names] of Object.entries(fields).sort()) {
+      message += `Number of students in ${field}: ${names.length}. List: ${names.join(', ')}\n`;
+    }
 
-    return output;
+    return message;
   } catch (error) {
     throw new Error('Cannot load the database');
   }
-}
+};
 
 const app = http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
@@ -45,13 +39,11 @@ const app = http.createServer((req, res) => {
     res.end('Hello Holberton School!');
   } else if (req.url === '/students') {
     try {
-      const output = countStudents(process.argv[2]);
-      res.end(`This is the list of our students\n${output}`);
+      const message = countStudents(database);
+      res.end(`This is the list of our students\n${message.slice(0, -1)}`);
     } catch (error) {
       res.end(`This is the list of our students\n${error.message}`);
     }
-  } else {
-    res.end('Hello Holberton School!');
   }
 });
 
