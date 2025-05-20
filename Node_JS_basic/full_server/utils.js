@@ -1,9 +1,8 @@
-const fs = require('fs');
+import fs from 'fs';
 
 const readDatabase = (filePath) => new Promise((resolve, reject) => {
   if (!filePath) {
     reject(new Error('Cannot load the database'));
-    return;
   }
 
   fs.readFile(filePath, 'utf8', (error, data) => {
@@ -12,24 +11,28 @@ const readDatabase = (filePath) => new Promise((resolve, reject) => {
       return;
     }
 
-    const lines = data.toString().split('\n');
-    const students = lines
-      .filter((line) => line.length > 0 && line.includes(','))
-      .slice(1);
+    const students = {};
+    const lines = data.split('\n');
+    const fileLines = lines.filter((line) => line.trim().length > 0);
+    const studentsLines = fileLines.slice(1);
 
-    const fields = {};
-    students.forEach((student) => {
-      const [firstname, , , field] = student.split(',');
-      if (firstname && field) {
-        if (!fields[field]) {
-          fields[field] = [];
+    if (studentsLines.length === 0) {
+      resolve(students);
+      return;
+    }
+
+    studentsLines.forEach((line) => {
+      const [firstName, , , field] = line.split(',');
+      if (field && firstName) {
+        if (!students[field]) {
+          students[field] = [];
         }
-        fields[field].push(firstname);
+        students[field].push(firstName);
       }
     });
 
-    resolve(fields);
+    resolve(students);
   });
 });
 
-module.exports = readDatabase;
+export default readDatabase;
